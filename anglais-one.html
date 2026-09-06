@@ -1,0 +1,1013 @@
+<title>Anglais One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+  :root{
+    --desk:#e4dcc7;
+    --paper:#fbf7ec;
+    --rule:#d3ddec;
+    --margin:#bf4a3d;
+    --margin-soft:#f4d9d4;
+    --ink:#28344a;
+    --ink-soft:#54607a;
+    --pen:#2c5490;
+    --pen-dark:#1c3a68;
+    --card:#fffdf7;
+    --muted:#6b7385;
+    --danger:#bf4a3d;
+    --danger-bg:#fbe9e6;
+    --success:#2f7a4f;
+    --success-bg:#e7f2e9;
+    --tape-1:rgba(247,209,64,0.55);
+    --tape-2:rgba(122,178,211,0.5);
+    --tape-3:rgba(224,140,160,0.45);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Nunito','Helvetica Neue',Arial,sans-serif;
+    background:var(--desk);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:28px 14px 80px;
+  }
+  .shell{
+    width:100%;
+    max-width:480px;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(to right, transparent 27px, var(--margin) 27px 29px, transparent 29px),
+      repeating-linear-gradient(var(--paper), var(--paper) 27px, var(--rule) 27px, var(--rule) 28px);
+    border-radius:4px;
+    box-shadow:
+      3px 3px 0 var(--paper), 3px 3px 0 1px rgba(40,52,74,0.12),
+      7px 7px 0 var(--paper), 7px 7px 0 1px rgba(40,52,74,0.10),
+      0 10px 24px rgba(40,52,74,0.18);
+    padding:26px 18px 60px 42px;
+    position:relative;
+  }
+  header{margin-bottom:22px;}
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:2px;
+  }
+  .brand-mark{
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:0.08em;
+    color:var(--paper);
+    background:var(--pen-dark);
+    padding:3px 7px;
+    border-radius:3px;
+    transform:rotate(-3deg);
+    display:inline-block;
+  }
+  h1{
+    font-family:'Caveat',cursive;
+    font-size:44px;
+    font-weight:700;
+    margin:0;
+    line-height:1;
+    color:var(--pen-dark);
+  }
+  .tagline{
+    font-size:13.5px;
+    color:var(--muted);
+    margin:8px 0 0;
+  }
+  .status-line{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:6px 0 0;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .status-line span{white-space:nowrap;}
+  nav{
+    display:flex;
+    gap:4px;
+    background:rgba(255,255,255,0.6);
+    border:1px solid var(--rule);
+    border-radius:10px;
+    padding:4px;
+    margin-bottom:22px;
+  }
+  nav button{
+    flex:1;
+    border:none;
+    background:transparent;
+    font-family:'Nunito',sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    padding:9px 6px;
+    border-radius:7px;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  nav button.active{
+    background:var(--pen);
+    color:#fff;
+  }
+  nav button:disabled, .btn:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+  }
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .field{margin-bottom:14px;}
+  label{
+    display:block;
+    font-family:'Nunito',sans-serif;
+    font-weight:700;
+    font-size:11.5px;
+    color:var(--muted);
+    margin-bottom:6px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+  }
+  input[type=text], select, textarea{
+    width:100%;
+    font-family:'Nunito',sans-serif;
+    font-size:16px;
+    padding:11px 13px;
+    border:1.5px solid var(--rule);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--ink);
+  }
+  textarea{resize:vertical;}
+  input[type=text]:focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:var(--pen);
+  }
+  .btn{
+    font-family:'Nunito',sans-serif;
+    font-size:14.5px;
+    font-weight:800;
+    padding:12px 18px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    width:100%;
+  }
+  .btn-primary{background:var(--pen);color:#fff;}
+  .btn-primary:hover{background:var(--pen-dark);}
+  .btn-ghost{background:transparent;border:1.5px solid var(--rule);color:var(--ink);margin-top:10px;}
+  .btn-ghost:hover{border-color:var(--pen);color:var(--pen-dark);}
+  .error{
+    font-family:'Nunito',sans-serif;
+    font-size:13px;
+    color:var(--danger);
+    margin:-6px 0 12px;
+    display:none;
+  }
+  .hint{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:14px;
+    line-height:1.5;
+  }
+  .word-card{
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-radius:8px;
+    padding:16px 14px 13px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .word-card::before{
+    content:"";
+    position:absolute;
+    top:-6px;
+    left:16px;
+    width:44px;
+    height:16px;
+    background:var(--tape-1);
+    transform:rotate(-4deg);
+  }
+  .word-card:nth-of-type(3n+2)::before{ background:var(--tape-2); left:auto; right:20px; transform:rotate(3deg); }
+  .word-card:nth-of-type(3n)::before{ background:var(--tape-3); transform:rotate(-2deg); left:50%; margin-left:-22px; }
+  .word-en{font-size:17.5px;font-weight:700;color:var(--ink);}
+  .word-fr{
+    font-family:'Nunito',sans-serif;
+    font-size:13px;
+    color:var(--pen-dark);
+    margin-top:2px;
+  }
+  .del{
+    font-family:'Nunito',sans-serif;
+    color:var(--muted);
+    background:transparent;
+    border:none;
+    font-size:19px;
+    cursor:pointer;
+    line-height:1;
+    padding:4px 6px;
+  }
+  .del:hover{color:var(--danger);}
+  .edit-btn{
+    font-family:'Nunito',sans-serif;
+    font-weight:700;
+    color:var(--pen);
+    background:transparent;
+    border:none;
+    font-size:13px;
+    cursor:pointer;
+    padding:4px 6px;
+  }
+  .edit-btn:hover{color:var(--pen-dark);text-decoration:underline;}
+  .word-actions{display:flex;gap:2px;align-items:center;}
+  .word-card.editing{display:block;}
+  .edit-form .field{margin-bottom:10px;}
+  .edit-form .hint{margin-top:0;margin-bottom:10px;}
+  .edit-actions{display:flex;gap:8px;}
+  .edit-actions .btn{padding:10px 14px;font-size:14px;}
+  .empty{
+    font-size:14px;
+    color:var(--muted);
+    padding:22px 0;
+    text-align:center;
+  }
+  .share-box{
+    border:1px solid var(--rule);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:18px;
+    background:rgba(255,255,255,0.55);
+  }
+  .share-box-title{
+    font-weight:800;
+    font-size:14px;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .share-box .btn{margin-top:8px;}
+  .share-box .btn:first-of-type{margin-top:0;}
+  .quiz-card{
+    background:var(--pen-dark);
+    color:#fdf9ee;
+    border-radius:12px;
+    padding:34px 22px;
+    text-align:center;
+    margin-bottom:16px;
+    position:relative;
+  }
+  .quiz-label{
+    font-family:'Nunito',sans-serif;
+    font-size:11.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:#c7d6ea;
+    margin-bottom:10px;
+  }
+  .quiz-word{font-family:'Caveat',cursive;font-size:34px;font-weight:600;}
+  .progress{
+    font-size:12.5px;
+    color:var(--muted);
+    margin-bottom:10px;
+    font-weight:700;
+  }
+  .feedback{
+    font-family:'Nunito',sans-serif;
+    font-size:14px;
+    padding:12px 14px;
+    border-radius:8px;
+    margin:12px 0;
+    display:none;
+  }
+  .feedback.correct{background:var(--success-bg);color:var(--success);display:block;}
+  .feedback.wrong{background:var(--danger-bg);color:var(--danger);display:block;}
+  .result{text-align:center;padding:14px 0 4px;}
+  .result-score{font-family:'Caveat',cursive;font-size:32px;color:var(--pen-dark);margin-bottom:2px;}
+  .result-label{
+    font-size:13px;
+    color:var(--muted);
+  }
+  .loading-note{
+    font-size:13px;
+    color:var(--muted);
+    text-align:center;
+    padding:20px 0;
+  }
+  .leaderboard-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:7px 0;
+    border-bottom:1px dashed var(--rule);
+    font-size:13.5px;
+  }
+  .leaderboard-row:last-child{border-bottom:none;}
+  .leaderboard-name{font-weight:700;color:var(--ink);}
+  .leaderboard-score{color:var(--pen-dark);font-weight:700;font-variant-numeric:tabular-nums;}
+  #fatal-error, #sync-banner{
+    font-size:13px;
+    padding:10px 14px;
+    border-radius:8px;
+    margin-bottom:16px;
+    display:none;
+  }
+  #fatal-error{background:var(--danger-bg);color:var(--danger);}
+  #sync-banner.warn{background:var(--margin-soft);color:var(--danger);display:block;}
+  #sync-banner.ok{background:var(--success-bg);color:var(--success);}
+</style>
+
+<div class="shell">
+  <div id="fatal-error"></div>
+  <header>
+    <div class="brand">
+      <span class="brand-mark">A1</span>
+      <h1>Anglais One</h1>
+    </div>
+    <p class="tagline">Le carnet de vocabulaire qu'on remplit à plusieurs.</p>
+    <div class="status-line" id="status-line"></div>
+  </header>
+
+  <nav>
+    <button id="tab-add" class="active" disabled>Ajouter</button>
+    <button id="tab-list" disabled>Mes mots</button>
+    <button id="tab-quiz" disabled>Quiz</button>
+  </nav>
+
+  <div id="loading-note" class="loading-note">Ouverture du carnet…</div>
+
+  <section id="panel-add" class="panel active" style="display:none;">
+    <div class="field">
+      <label for="in-en">Mot en anglais</label>
+      <input type="text" id="in-en" placeholder="pond">
+    </div>
+    <div class="field">
+      <label for="in-fr">Traduction en français</label>
+      <input type="text" id="in-fr" placeholder="étang">
+    </div>
+    <div class="error" id="add-error">Remplis le mot anglais et sa traduction.</div>
+    <button class="btn btn-primary" id="btn-add">Ajouter la carte</button>
+    <p class="hint">Tu peux mettre plusieurs traductions séparées par une virgule (ex : "commander, ordonner"). La carte apparaît tout de suite chez tous les amis qui ont cette page ouverte.</p>
+  </section>
+
+  <section id="panel-list" class="panel">
+    <div class="share-box">
+      <div class="share-box-title">Partager avec tes amis</div>
+      <p class="hint" style="margin-top:0;">Envoie-leur le lien de cette page. Tout le monde qui l'ouvre voit les mêmes mots, peut en ajouter, les modifier ou les réviser — ça se synchronise automatiquement, pas besoin de recommencer.</p>
+      <button class="btn btn-primary" id="btn-copy-link">Copier le lien</button>
+      <div id="copy-link-feedback" style="display:none;font-size:13px;color:var(--success);margin-top:6px;">Lien copié ! Colle-le dans un message.</div>
+    </div>
+    <div id="list-empty" class="empty" style="display:none;">Aucun mot pour l'instant. Ajoute-en dans l'onglet "Ajouter".</div>
+    <div id="list-container"></div>
+  </section>
+
+  <section id="panel-quiz" class="panel">
+    <div id="quiz-empty" class="empty" style="display:none;">Ajoute au moins un mot avant de commencer le quiz.</div>
+    <div id="quiz-setup">
+      <div class="field">
+        <label for="quiz-mode">Sens du quiz</label>
+        <select id="quiz-mode">
+          <option value="en-fr">Anglais → Français</option>
+          <option value="fr-en">Français → Anglais</option>
+          <option value="mix">Mélange des deux sens</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="quiz-start">Commencer le quiz</button>
+    </div>
+    <div id="quiz-body" style="display:none;">
+      <div class="progress" id="quiz-progress"></div>
+      <div class="quiz-card">
+        <div class="quiz-label" id="quiz-label">TRADUIS CE MOT</div>
+        <div class="quiz-word" id="quiz-word"></div>
+      </div>
+      <div class="field">
+        <label for="quiz-input">Ta réponse</label>
+        <input type="text" id="quiz-input" placeholder="Ta réponse">
+      </div>
+      <div class="error" id="quiz-error">Écris une réponse avant de valider.</div>
+      <div class="feedback" id="quiz-feedback"></div>
+      <button class="btn btn-primary" id="quiz-check">Valider</button>
+      <button class="btn btn-primary" id="quiz-next" style="display:none;">Mot suivant</button>
+    </div>
+    <div id="quiz-result" class="result" style="display:none;">
+      <div class="result-score" id="quiz-result-score"></div>
+      <div class="result-label">Score final</div>
+      <div class="field" style="text-align:left;margin-top:18px;">
+        <label for="quiz-name">Ton prénom (pour le classement)</label>
+        <input type="text" id="quiz-name" placeholder="Ex : Léo">
+      </div>
+      <button class="btn btn-primary" id="quiz-save-score">Ajouter au classement</button>
+      <div id="quiz-save-feedback" style="display:none;font-size:13px;margin-top:8px;"></div>
+    </div>
+    <button class="btn btn-ghost" id="quiz-restart" style="display:none;">Recommencer le quiz</button>
+
+    <div class="share-box" id="leaderboard-box" style="margin-top:20px;">
+      <div class="share-box-title">🏆 Classement de la bande</div>
+      <div id="leaderboard-list"></div>
+      <div id="leaderboard-empty" class="empty" style="display:none;padding:8px 0;">Personne n'a encore de score. Sois le premier à jouer !</div>
+    </div>
+  </section>
+</div>
+
+<script>
+window.addEventListener('error', function(e){
+  var box = document.getElementById('fatal-error');
+  if(box){
+    box.style.display = 'block';
+    box.textContent = 'Un problème est survenu (' + (e.message || 'erreur inconnue') + '). Essaie de recharger la page.';
+  }
+});
+</script>
+<script>
+(function(){
+  var LOCAL_KEY = 'anglaisOneLocalCards';
+  var LOCAL_ID_KEY = 'anglaisOneMyId';
+  var LOCAL_NAME_KEY = 'anglaisOneMyName';
+  var DEFAULT_CARDS = [
+    {en:"set off on", fr:["se mettre en route"]},
+    {en:"her walk", fr:["sa promenade"]},
+    {en:"filled", fr:["rempli"]},
+    {en:"leaves", fr:["feuilles"]},
+    {en:"gentle rustling", fr:["léger bruissement"]},
+    {en:"the warm", fr:["la chaleur"]},
+    {en:"trotted up to", fr:["s'est précipité vers"]},
+    {en:"wagging its tail", fr:["remuant la queue"]},
+    {en:"tail", fr:["queue"]},
+    {en:"petted", fr:["caressé"]},
+    {en:"to pet", fr:["caresser"]},
+    {en:"friendly demeanor", fr:["attitude amicale"]},
+    {en:"demeanor", fr:["comportement"]},
+    {en:"daisies", fr:["marguerites"]},
+    {en:"scents", fr:["parfums"]},
+    {en:"ordered", fr:["commandé"]},
+    {en:"order", fr:["commander"]},
+    {en:"pond", fr:["étang"]},
+    {en:"nearby", fr:["à proximité"]}
+  ];
+
+  var cards = [];           // {id, en, fr:[]}
+  var editingId = null;
+  var quizOrder = [];
+  var quizIndex = 0;
+  var quizScore = 0;
+
+  var dbNs = null;
+  var wordsCol = null;
+  var scoresCol = null;
+  var roomNs = null;
+  var offline = false;
+
+  function norm(s){ return (s||'').trim().toLowerCase(); }
+
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function escapeAttr(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function setStatus(html){
+    document.getElementById('status-line').innerHTML = html;
+  }
+
+  function showSyncBanner(text, cls){
+    var el = document.getElementById('sync-banner');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'sync-banner';
+      document.getElementById('fatal-error').insertAdjacentElement('afterend', el);
+    }
+    el.className = cls || 'warn';
+    el.style.display = 'block';
+    el.textContent = text;
+  }
+
+  function getMyId(){
+    try{
+      var id = localStorage.getItem(LOCAL_ID_KEY);
+      if(!id){
+        id = 'friend-' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+        localStorage.setItem(LOCAL_ID_KEY, id);
+      }
+      return id;
+    } catch(e){
+      return 'friend-anon';
+    }
+  }
+
+  function getMyName(){
+    try{ return localStorage.getItem(LOCAL_NAME_KEY) || ''; } catch(e){ return ''; }
+  }
+  function setMyName(name){
+    try{ localStorage.setItem(LOCAL_NAME_KEY, name); } catch(e){}
+  }
+
+  // ---------- Local fallback (used only when live sync isn't available) ----------
+  function loadLocal(){
+    try{
+      var raw = localStorage.getItem(LOCAL_KEY);
+      if(raw){
+        var arr = JSON.parse(raw);
+        cards = arr.map(function(c, i){ return {id: c.id || ('local-'+i), en: c.en, fr: c.fr}; });
+        return;
+      }
+    } catch(e){}
+    cards = DEFAULT_CARDS.map(function(c, i){ return {id: 'local-'+i, en: c.en, fr: c.fr.slice()}; });
+    persistLocal();
+  }
+  function persistLocal(){
+    try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(cards)); } catch(e){}
+  }
+
+  // ---------- Storage-agnostic operations ----------
+  async function addCard(en, fr){
+    if(offline){
+      cards.push({id: 'local-' + Date.now() + Math.random().toString(36).slice(2,6), en: en, fr: fr});
+      persistLocal();
+      renderList();
+      return;
+    }
+    await wordsCol.add({en: en, fr: fr, createdAt: Date.now()});
+  }
+
+  async function updateCard(id, en, fr){
+    if(offline){
+      var c = cards.find(function(x){ return x.id === id; });
+      if(c){ c.en = en; c.fr = fr; persistLocal(); }
+      renderList();
+      return;
+    }
+    await wordsCol.doc(id).update({en: en, fr: fr});
+  }
+
+  async function deleteCard(id){
+    if(offline){
+      cards = cards.filter(function(x){ return x.id !== id; });
+      persistLocal();
+      renderList();
+      return;
+    }
+    await wordsCol.doc(id).delete();
+  }
+
+  // ---------- Tabs ----------
+  function switchTab(name){
+    ['add','list','quiz'].forEach(function(t){
+      document.getElementById('tab-'+t).classList.toggle('active', t===name);
+      document.getElementById('panel-'+t).classList.toggle('active', t===name);
+    });
+    if(name === 'list') renderList();
+    if(name === 'quiz') setupQuiz();
+  }
+
+  // ---------- List rendering ----------
+  function renderList(){
+    var container = document.getElementById('list-container');
+    var empty = document.getElementById('list-empty');
+    if(!container) return;
+    container.innerHTML = '';
+    if(cards.length === 0){ empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    cards.forEach(function(c){
+      var row = document.createElement('div');
+      row.className = 'word-card';
+
+      if(editingId === c.id){
+        row.innerHTML =
+          '<div class="edit-form" style="width:100%;">' +
+            '<div class="field">' +
+              '<label>Mot en anglais</label>' +
+              '<input type="text" class="edit-en" value="'+escapeAttr(c.en)+'">' +
+            '</div>' +
+            '<div class="field">' +
+              '<label>Traductions (séparées par une virgule)</label>' +
+              '<input type="text" class="edit-fr" value="'+escapeAttr(c.fr.join(', '))+'">' +
+            '</div>' +
+            '<div class="error edit-error" style="display:none;">Remplis le mot anglais et au moins une traduction.</div>' +
+            '<div class="edit-actions">' +
+              '<button class="btn btn-primary edit-save">Enregistrer</button>' +
+              '<button class="btn btn-ghost edit-cancel" style="margin-top:0;">Annuler</button>' +
+            '</div>' +
+          '</div>';
+        container.appendChild(row);
+
+        var enInput = row.querySelector('.edit-en');
+        var frInput = row.querySelector('.edit-fr');
+        var errBox = row.querySelector('.edit-error');
+
+        row.querySelector('.edit-save').addEventListener('click', async function(){
+          var newEn = enInput.value.trim();
+          var newFr = frInput.value.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+          if(!newEn || newFr.length === 0){
+            errBox.style.display = 'block';
+            return;
+          }
+          try{
+            await updateCard(c.id, newEn, newFr);
+            editingId = null;
+            if(!offline) renderList();
+          } catch(e){
+            errBox.style.display = 'block';
+            errBox.textContent = "La modification n'a pas pu être enregistrée. Réessaie.";
+          }
+        });
+        row.querySelector('.edit-cancel').addEventListener('click', function(){
+          editingId = null;
+          renderList();
+        });
+        return;
+      }
+
+      var txt = document.createElement('div');
+      txt.innerHTML = '<div class="word-en">'+escapeHtml(c.en)+'</div><div class="word-fr">'+escapeHtml(c.fr.join(', '))+'</div>';
+      var actions = document.createElement('div');
+      actions.className = 'word-actions';
+      var edit = document.createElement('button');
+      edit.className = 'edit-btn';
+      edit.textContent = 'Modifier';
+      edit.addEventListener('click', function(){
+        editingId = c.id;
+        renderList();
+      });
+      var del = document.createElement('button');
+      del.className = 'del';
+      del.textContent = '×';
+      del.setAttribute('aria-label', 'Supprimer');
+      del.addEventListener('click', async function(){
+        try{
+          await deleteCard(c.id);
+          if(!offline) renderList();
+        } catch(e){
+          showSyncBanner("La suppression n'a pas pu être enregistrée. Réessaie.", 'warn');
+        }
+      });
+      actions.appendChild(edit);
+      actions.appendChild(del);
+      row.appendChild(txt);
+      row.appendChild(actions);
+      container.appendChild(row);
+    });
+  }
+
+  // ---------- Quiz ----------
+  function setupQuiz(){
+    var empty = document.getElementById('quiz-empty');
+    var body = document.getElementById('quiz-body');
+    var restart = document.getElementById('quiz-restart');
+    var setup = document.getElementById('quiz-setup');
+    var result = document.getElementById('quiz-result');
+    if(cards.length === 0){
+      empty.style.display = 'block';
+      setup.style.display = 'none';
+      body.style.display = 'none';
+      result.style.display = 'none';
+      restart.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+    setup.style.display = 'block';
+    body.style.display = 'none';
+    result.style.display = 'none';
+    restart.style.display = 'none';
+  }
+
+  function startQuiz(){
+    var body = document.getElementById('quiz-body');
+    var setup = document.getElementById('quiz-setup');
+    var restart = document.getElementById('quiz-restart');
+    var result = document.getElementById('quiz-result');
+    var mode = document.getElementById('quiz-mode').value;
+    setup.style.display = 'none';
+    result.style.display = 'none';
+    body.style.display = 'block';
+    restart.style.display = 'none';
+    quizOrder = cards.map(function(_, i){
+      var dir = mode;
+      if(mode === 'mix'){ dir = Math.random() < 0.5 ? 'en-fr' : 'fr-en'; }
+      return {cardIndex: i, dir: dir};
+    });
+    for(var i = quizOrder.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = quizOrder[i]; quizOrder[i] = quizOrder[j]; quizOrder[j] = tmp;
+    }
+    quizIndex = 0;
+    quizScore = 0;
+    showQuizWord();
+  }
+
+  function showQuizWord(){
+    var progress = document.getElementById('quiz-progress');
+    var wordEl = document.getElementById('quiz-word');
+    var input = document.getElementById('quiz-input');
+    var fb = document.getElementById('quiz-feedback');
+    var err = document.getElementById('quiz-error');
+    var checkBtn = document.getElementById('quiz-check');
+    var nextBtn = document.getElementById('quiz-next');
+    var body = document.getElementById('quiz-body');
+    var restart = document.getElementById('quiz-restart');
+    var labelEl = document.getElementById('quiz-label');
+    var result = document.getElementById('quiz-result');
+
+    if(quizIndex >= quizOrder.length){
+      body.style.display = 'none';
+      result.style.display = 'block';
+      document.getElementById('quiz-result-score').textContent = quizScore + ' / ' + quizOrder.length;
+      var nameInput = document.getElementById('quiz-name');
+      nameInput.value = getMyName();
+      document.getElementById('quiz-save-feedback').style.display = 'none';
+      restart.style.display = 'block';
+      restart.onclick = setupQuiz;
+      return;
+    }
+    var entry = quizOrder[quizIndex];
+    var card = cards[entry.cardIndex];
+    progress.textContent = 'Carte ' + (quizIndex + 1) + ' / ' + quizOrder.length;
+    if(entry.dir === 'en-fr'){
+      labelEl.textContent = 'TRADUIS CE MOT EN FRANÇAIS';
+      wordEl.textContent = card.en;
+      input.placeholder = 'Ta réponse en français';
+    } else {
+      labelEl.textContent = 'TRADUIS CE MOT EN ANGLAIS';
+      wordEl.textContent = card.fr[Math.floor(Math.random() * card.fr.length)];
+      input.placeholder = 'Ta réponse en anglais';
+    }
+    input.value = '';
+    fb.className = 'feedback';
+    fb.style.display = 'none';
+    err.style.display = 'none';
+    checkBtn.style.display = 'block';
+    nextBtn.style.display = 'none';
+    input.disabled = false;
+    input.focus();
+  }
+
+  function checkAnswer(){
+    var input = document.getElementById('quiz-input');
+    var err = document.getElementById('quiz-error');
+    var fb = document.getElementById('quiz-feedback');
+    var checkBtn = document.getElementById('quiz-check');
+    var nextBtn = document.getElementById('quiz-next');
+    var val = input.value.trim();
+    if(!val){
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+    var entry = quizOrder[quizIndex];
+    var card = cards[entry.cardIndex];
+    var correct;
+    var expected;
+    if(entry.dir === 'en-fr'){
+      correct = card.fr.some(function(t){ return norm(t) === norm(val); });
+      expected = card.fr.join(' / ');
+    } else {
+      correct = norm(val) === norm(card.en);
+      expected = card.en;
+    }
+    fb.style.display = 'block';
+    if(correct){
+      quizScore++;
+      fb.className = 'feedback correct';
+      fb.textContent = 'Correct.';
+    } else {
+      fb.className = 'feedback wrong';
+      fb.textContent = 'Pas tout à fait. Réponse : ' + expected;
+    }
+    input.disabled = true;
+    checkBtn.style.display = 'none';
+    nextBtn.style.display = 'block';
+  }
+
+  // ---------- Leaderboard ----------
+  function renderLeaderboard(scores){
+    var list = document.getElementById('leaderboard-list');
+    var empty = document.getElementById('leaderboard-empty');
+    if(!list) return;
+    if(!scores || scores.length === 0){
+      list.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    var medals = ['🥇','🥈','🥉'];
+    list.innerHTML = scores.map(function(s, i){
+      var medal = medals[i] || ((i+1)+'.');
+      return '<div class="leaderboard-row"><span class="leaderboard-name">'+medal+' '+escapeHtml(s.name)+'</span>' +
+        '<span class="leaderboard-score">'+s.score+' / '+s.total+'</span></div>';
+    }).join('');
+  }
+
+  async function saveScore(){
+    var nameInput = document.getElementById('quiz-name');
+    var feedback = document.getElementById('quiz-save-feedback');
+    var name = nameInput.value.trim();
+    feedback.style.display = 'block';
+    if(!name){
+      feedback.style.color = 'var(--danger)';
+      feedback.textContent = 'Écris ton prénom avant d\'enregistrer ton score.';
+      return;
+    }
+    setMyName(name);
+    var pct = quizOrder.length ? quizScore / quizOrder.length : 0;
+    var myId = getMyId();
+
+    if(offline){
+      feedback.style.color = 'var(--danger)';
+      feedback.textContent = "Le classement partagé n'est pas disponible ici (mode solo).";
+      return;
+    }
+    try{
+      var ref = scoresCol.doc(myId);
+      var snap = await ref.get();
+      var prevPct = snap.exists && snap.data() ? (snap.data().pct || 0) : -1;
+      if(pct >= prevPct){
+        await ref.set({name: name, score: quizScore, total: quizOrder.length, pct: pct, ts: Date.now()});
+        feedback.style.color = 'var(--success)';
+        feedback.textContent = 'Score ajouté au classement !';
+      } else {
+        feedback.style.color = 'var(--ink-soft)';
+        feedback.textContent = 'Ton meilleur score reste meilleur (' + Math.round(prevPct*100) + '%). Il est déjà dans le classement.';
+      }
+    } catch(e){
+      feedback.style.color = 'var(--danger)';
+      feedback.textContent = "L'enregistrement a échoué. Réessaie.";
+    }
+  }
+
+  function subscribeLeaderboard(){
+    if(offline){ renderLeaderboard([]); return; }
+    scoresCol.orderBy('pct', 'desc').limit(8).onSnapshot(function(snap){
+      var scores = snap.docs.map(function(d){ return d.data(); }).filter(Boolean);
+      renderLeaderboard(scores);
+    }, function(err){
+      renderLeaderboard([]);
+    });
+  }
+
+  // ---------- Live word sync ----------
+  function subscribeWords(onFirstLoad){
+    var firstLoad = true;
+    wordsCol.orderBy('createdAt', 'asc').limit(1000).onSnapshot(function(snap){
+      cards = snap.docs.map(function(d){
+        var data = d.data() || {};
+        var fr = data.fr;
+        if(!Array.isArray(fr)) fr = fr ? [String(fr)] : [];
+        return {id: d.id, en: data.en || '', fr: fr};
+      });
+      if(firstLoad){
+        firstLoad = false;
+        if(onFirstLoad) onFirstLoad();
+      }
+      // Re-render whichever panel is currently visible.
+      if(document.getElementById('panel-list').classList.contains('active')) renderList();
+      if(document.getElementById('panel-quiz').classList.contains('active') &&
+         document.getElementById('quiz-body').style.display === 'none'){
+        setupQuiz();
+      }
+    }, function(err){
+      showSyncBanner("La connexion au carnet partagé a été interrompue. Recharge la page pour réessayer.", 'warn');
+    });
+  }
+
+  // ---------- Presence ----------
+  function setupPresence(){
+    if(!roomNs) return;
+    try{
+      roomNs.presence({});
+      roomNs.onPeers(function(peers){
+        var n = (peers ? peers.length : 0) + 1;
+        var el = document.getElementById('peer-count');
+        var label = n <= 1 ? 'Tu es seul·e ici pour l\'instant' : n + ' personnes sur cette page en ce moment';
+        if(el){ el.textContent = '👀 ' + label; }
+      });
+    } catch(e){}
+  }
+
+  // ---------- Init ----------
+  async function init(){
+    try{
+      dbNs = await claude.use('db');
+    } catch(e){ dbNs = null; }
+
+    if(dbNs){
+      wordsCol = dbNs.collection('words');
+      scoresCol = dbNs.collection('scores');
+      offline = false;
+      setStatus('<span id="sync-note">🔄 Synchronisé en direct avec tes amis</span><span id="peer-count"></span>');
+      subscribeWords(function(){
+        finishInit();
+      });
+      subscribeLeaderboard();
+    } else {
+      offline = true;
+      loadLocal();
+      setStatus('<span>📴 Mode solo — ouvre le lien publié de cette page pour partager et synchroniser avec tes amis.</span>');
+      finishInit();
+    }
+
+    try{
+      roomNs = await claude.use('room');
+    } catch(e){ roomNs = null; }
+    setupPresence();
+  }
+
+  function finishInit(){
+    document.getElementById('loading-note').style.display = 'none';
+    document.getElementById('panel-add').style.display = 'block';
+    ['tab-add','tab-list','tab-quiz'].forEach(function(id){
+      document.getElementById(id).disabled = false;
+    });
+
+    document.getElementById('tab-add').addEventListener('click', function(){ switchTab('add'); });
+    document.getElementById('tab-list').addEventListener('click', function(){ switchTab('list'); });
+    document.getElementById('tab-quiz').addEventListener('click', function(){ switchTab('quiz'); });
+
+    document.getElementById('btn-add').addEventListener('click', async function(){
+      var enField = document.getElementById('in-en');
+      var frField = document.getElementById('in-fr');
+      var en = enField.value.trim();
+      var fr = frField.value.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      var err = document.getElementById('add-error');
+      if(!en || fr.length === 0){
+        err.style.display = 'block';
+        return;
+      }
+      err.style.display = 'none';
+      try{
+        await addCard(en, fr);
+        enField.value = '';
+        frField.value = '';
+        enField.focus();
+      } catch(e){
+        err.style.display = 'block';
+        err.textContent = "L'ajout a échoué. Réessaie.";
+      }
+    });
+
+    document.getElementById('in-fr').addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ document.getElementById('btn-add').click(); }
+    });
+
+    document.getElementById('btn-copy-link').addEventListener('click', function(){
+      var feedback = document.getElementById('copy-link-feedback');
+      var url = location.href;
+      var copied = false;
+      try {
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(url);
+          copied = true;
+        }
+      } catch(e){}
+      if(!copied){
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = url;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          copied = true;
+        } catch(e){}
+      }
+      feedback.style.display = 'block';
+      feedback.textContent = copied ? 'Lien copié ! Colle-le dans un message.' : 'Copie manuellement l\'adresse de cette page depuis la barre du navigateur.';
+    });
+
+    document.getElementById('quiz-start').addEventListener('click', startQuiz);
+    document.getElementById('quiz-check').addEventListener('click', checkAnswer);
+    document.getElementById('quiz-save-score').addEventListener('click', saveScore);
+    document.getElementById('quiz-next').addEventListener('click', function(){
+      quizIndex++;
+      showQuizWord();
+    });
+    document.getElementById('quiz-input').addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        if(document.getElementById('quiz-check').style.display !== 'none'){
+          checkAnswer();
+        } else {
+          quizIndex++;
+          showQuizWord();
+        }
+      }
+    });
+
+    if(document.getElementById('panel-list').classList.contains('active')) renderList();
+    if(document.getElementById('panel-quiz').classList.contains('active')) setupQuiz();
+  }
+
+  init();
+})();
+</script>
