@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anglais One</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
@@ -321,7 +326,8 @@
   #sync-banner.warn{background:var(--margin-soft);color:var(--danger);display:block;}
   #sync-banner.ok{background:var(--success-bg);color:var(--success);}
 </style>
-
+</head>
+<body>
 <div class="shell">
   <div id="fatal-error"></div>
   <header>
@@ -358,7 +364,7 @@
   <section id="panel-list" class="panel">
     <div class="share-box">
       <div class="share-box-title">Partager avec tes amis</div>
-      <p class="hint" style="margin-top:0;">Envoie-leur le lien de cette page. Tout le monde qui l'ouvre voit les mêmes mots, peut en ajouter, les modifier ou les réviser — ça se synchronise automatiquement, pas besoin de recommencer.</p>
+      <p class="hint" style="margin-top:0;">Envoie-leur le lien de cette page. Tout le monde qui l'ouvre voit les mêmes mots, peut en ajouter, les modifier ou les réviser — ça se synchronise automatiquement, pas besoin de recommencer. Pas de compte requis.</p>
       <button class="btn btn-primary" id="btn-copy-link">Copier le lien</button>
       <div id="copy-link-feedback" style="display:none;font-size:13px;color:var(--success);margin-top:6px;">Lien copié ! Colle-le dans un message.</div>
     </div>
@@ -423,8 +429,20 @@ window.addEventListener('error', function(e){
   }
 });
 </script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script>
 (function(){
+  var FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBE1leGJTA24zpbOgFfoUL37zsQIO5sm0I",
+    authDomain: "anglais-b8c25.firebaseapp.com",
+    databaseURL: "https://anglais-b8c25-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "anglais-b8c25",
+    storageBucket: "anglais-b8c25.firebasestorage.app",
+    messagingSenderId: "208842238932",
+    appId: "1:208842238932:web:5f5f11bdbb5d522b89c441"
+  };
+
   var LOCAL_KEY = 'anglaisOneLocalCards';
   var LOCAL_ID_KEY = 'anglaisOneMyId';
   var LOCAL_NAME_KEY = 'anglaisOneMyName';
@@ -456,10 +474,9 @@ window.addEventListener('error', function(e){
   var quizIndex = 0;
   var quizScore = 0;
 
-  var dbNs = null;
-  var wordsCol = null;
-  var scoresCol = null;
-  var roomNs = null;
+  var db = null;
+  var wordsRef = null;
+  var scoresRef = null;
   var offline = false;
 
   function norm(s){ return (s||'').trim().toLowerCase(); }
@@ -513,7 +530,7 @@ window.addEventListener('error', function(e){
     try{ localStorage.setItem(LOCAL_NAME_KEY, name); } catch(e){}
   }
 
-  // ---------- Local fallback (used only when live sync isn't available) ----------
+  // ---------- Local fallback (used only when Firebase can't be reached) ----------
   function loadLocal(){
     try{
       var raw = localStorage.getItem(LOCAL_KEY);
@@ -538,7 +555,7 @@ window.addEventListener('error', function(e){
       renderList();
       return;
     }
-    await wordsCol.add({en: en, fr: fr, createdAt: Date.now()});
+    await wordsRef.push({en: en, fr: fr, createdAt: firebase.database.ServerValue.TIMESTAMP});
   }
 
   async function updateCard(id, en, fr){
@@ -548,7 +565,7 @@ window.addEventListener('error', function(e){
       renderList();
       return;
     }
-    await wordsCol.doc(id).update({en: en, fr: fr});
+    await wordsRef.child(id).update({en: en, fr: fr});
   }
 
   async function deleteCard(id){
@@ -558,7 +575,7 @@ window.addEventListener('error', function(e){
       renderList();
       return;
     }
-    await wordsCol.doc(id).delete();
+    await wordsRef.child(id).remove();
   }
 
   // ---------- Tabs ----------
@@ -828,11 +845,12 @@ window.addEventListener('error', function(e){
       return;
     }
     try{
-      var ref = scoresCol.doc(myId);
-      var snap = await ref.get();
-      var prevPct = snap.exists && snap.data() ? (snap.data().pct || 0) : -1;
+      var ref = scoresRef.child(myId);
+      var snap = await ref.once('value');
+      var existing = snap.val();
+      var prevPct = existing ? (existing.pct || 0) : -1;
       if(pct >= prevPct){
-        await ref.set({name: name, score: quizScore, total: quizOrder.length, pct: pct, ts: Date.now()});
+        await ref.set({name: name, score: quizScore, total: quizOrder.length, pct: pct, ts: firebase.database.ServerValue.TIMESTAMP});
         feedback.style.color = 'var(--success)';
         feedback.textContent = 'Score ajouté au classement !';
       } else {
@@ -847,8 +865,10 @@ window.addEventListener('error', function(e){
 
   function subscribeLeaderboard(){
     if(offline){ renderLeaderboard([]); return; }
-    scoresCol.orderBy('pct', 'desc').limit(8).onSnapshot(function(snap){
-      var scores = snap.docs.map(function(d){ return d.data(); }).filter(Boolean);
+    scoresRef.orderByChild('pct').limitToLast(8).on('value', function(snap){
+      var scores = [];
+      snap.forEach(function(child){ scores.push(child.val()); });
+      scores.reverse(); // ascending -> descending (best first)
       renderLeaderboard(scores);
     }, function(err){
       renderLeaderboard([]);
@@ -858,13 +878,15 @@ window.addEventListener('error', function(e){
   // ---------- Live word sync ----------
   function subscribeWords(onFirstLoad){
     var firstLoad = true;
-    wordsCol.orderBy('createdAt', 'asc').limit(1000).onSnapshot(function(snap){
-      cards = snap.docs.map(function(d){
-        var data = d.data() || {};
+    wordsRef.orderByChild('createdAt').on('value', function(snap){
+      var next = [];
+      snap.forEach(function(child){
+        var data = child.val() || {};
         var fr = data.fr;
         if(!Array.isArray(fr)) fr = fr ? [String(fr)] : [];
-        return {id: d.id, en: data.en || '', fr: fr};
+        next.push({id: child.key, en: data.en || '', fr: fr});
       });
+      cards = next;
       if(firstLoad){
         firstLoad = false;
         if(onFirstLoad) onFirstLoad();
@@ -882,11 +904,20 @@ window.addEventListener('error', function(e){
 
   // ---------- Presence ----------
   function setupPresence(){
-    if(!roomNs) return;
+    if(!db) return;
     try{
-      roomNs.presence({});
-      roomNs.onPeers(function(peers){
-        var n = (peers ? peers.length : 0) + 1;
+      var myId = getMyId();
+      var presenceRef = db.ref('presence/' + myId);
+      db.ref('.info/connected').on('value', function(snap){
+        if(snap.val() === true){
+          presenceRef.onDisconnect().remove().then(function(){
+            presenceRef.set(true);
+          });
+        }
+      });
+      db.ref('presence').on('value', function(snap){
+        var n = snap.numChildren();
+        if(n < 1) n = 1;
         var el = document.getElementById('peer-count');
         var label = n <= 1 ? 'Tu es seul·e ici pour l\'instant' : n + ' personnes sur cette page en ce moment';
         if(el){ el.textContent = '👀 ' + label; }
@@ -897,29 +928,24 @@ window.addEventListener('error', function(e){
   // ---------- Init ----------
   async function init(){
     try{
-      dbNs = await claude.use('db');
-    } catch(e){ dbNs = null; }
-
-    if(dbNs){
-      wordsCol = dbNs.collection('words');
-      scoresCol = dbNs.collection('scores');
+      if(typeof firebase === 'undefined') throw new Error('sdk-not-loaded');
+      firebase.initializeApp(FIREBASE_CONFIG);
+      db = firebase.database();
+      wordsRef = db.ref('words');
+      scoresRef = db.ref('scores');
       offline = false;
       setStatus('<span id="sync-note">🔄 Synchronisé en direct avec tes amis</span><span id="peer-count"></span>');
       subscribeWords(function(){
         finishInit();
       });
       subscribeLeaderboard();
-    } else {
+      setupPresence();
+    } catch(e){
       offline = true;
       loadLocal();
-      setStatus('<span>📴 Mode solo — ouvre le lien publié de cette page pour partager et synchroniser avec tes amis.</span>');
+      setStatus('<span>📴 Mode solo — la synchronisation n\'a pas pu démarrer ici (connexion ou blocage réseau). Recharge la page pour réessayer.</span>');
       finishInit();
     }
-
-    try{
-      roomNs = await claude.use('room');
-    } catch(e){ roomNs = null; }
-    setupPresence();
   }
 
   function finishInit(){
@@ -1011,3 +1037,5 @@ window.addEventListener('error', function(e){
   init();
 })();
 </script>
+</body>
+</html>
